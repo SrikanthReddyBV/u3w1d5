@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        background-color: black;
+      }
+      #app {
+        margin: 0 20%;
+        border: black solid 2px;
+        display: flex;
+        flex-direction: column;
+        background-color: black;
+      }
+      #app > div > img {
+        /* margin: 10% 20%; */
+        max-height: 100%;
+        max-width: 100%;
+        background-color: black;
+      }
+      #input {
+        display: flex;
+        flex-direction: row;
+        margin: auto;
+        margin-top: 30px;
+        background-color: #2d2f30;
+        padding: 5px;
+        border-radius: 20px;
+      }
+
+      #search_icon > button {
+        background-color: yellow;
+        max-width: 40px;
+        max-height: 40px;
+        border-radius: 50%;
+        box-sizing: border-box;
+        /* border: hidden #2d2f30 0px; */
+      }
+      #search_icon > button > img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+      #input > div > input {
+        max-width: 100%;
+        border: none;
+        background-color: #2d2f30;
+        margin: 8px;
+        box-sizing: border-box;
+        border: hidden #2d2f30 0px;
+        color: white;
+      }
+
+      #input > div > input:focus {
+        outline: none;
+      }
+      #innerdiv::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+      }
+      #innerdiv {
+        min-height: auto;
+        overflow-y: scroll;
+        max-height: 100px;
+        color: white;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: smaller;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cont">
+      <div id="app">
+        <div>
+          <img
+            src="https://pngimg.com/uploads/star_wars_logo/star_wars_logo_PNG20.png"
+          />
+        </div>
+        <div id="input">
+          <div id="toAppend">
+            <input
+              type="text"
+              placeholder="Search characters"
+              oninput="suggetions()"
+              id="query"
+            />
+          </div>
+          <div id="search_icon">
+            <button>
+              <img
+                src="https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/search-512.png"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  let div = document.getElementById("toAppend");
+  let child = document.createElement("div");
+  let timerId;
+
+  async function getData(q) {
+    let res = await fetch(`https://swapi.dev/api/people/?search=${q}`);
+    let data = await res.json();
+
+    // console.log(data);
+
+    data.results.forEach(({ name }) => {
+      //   console.log(name);
+
+      child.setAttribute("id", "innerdiv");
+      let p = document.createElement("p");
+      p.innerText = ` ${name}`;
+      child.append(p);
+      div.appendChild(child);
+    });
+  }
+
+  function suggetions() {
+    if (timerId) {
+      return false;
+    }
+    timerId = setTimeout(() => {
+      child.innerHTML = null;
+      let query = document.getElementById("query").value;
+      getData(query);
+      timerId = undefined;
+    }, 1000);
+  }
+</script>
